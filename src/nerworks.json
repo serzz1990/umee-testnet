@@ -1,0 +1,23 @@
+{
+  "unee": {
+    "addressName": "umee",
+    "denom": "uumee",
+    "rpcNodeUrl": "https://rpc.festival.umeemania-1.network.umee.cc"
+  },
+  "cosmos": {
+    "addressName": "cosmos",
+    "denom": "uatom",
+    "rpcNodeUrl": "https://rpc.flash.gaia-umeemania-1.network.umee.cc",
+    "wss": "wss://rpc.flash.gaia-umeemania-1.network.umee.cc"
+  },
+  "osmo": {
+    "addressName": "osmo",
+    "denom": "uosmo",
+    "rpcNodeUrl": "https://api.wall.osmosis-umeemania-1.network.umee.cc"
+  },
+  "juno": {
+    "addressName": "juno",
+    "denom": "ujuno",
+    "rpcNodeUrl": "https://api.section.juno-umeemania-1.network.umee.cc"
+  }
+}
