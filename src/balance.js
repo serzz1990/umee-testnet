@@ -1,16 +1,24 @@
-const Stargate = require("@cosmjs/stargate");
-const { DirectSecp256k1HdWallet, Registry } = require("@cosmjs/proto-signing");
-const { toBech32, fromBech32 } = require("@cosmjs/encoding");
-const chalk = require('chalk');
+import { StargateClient } from "@cosmjs/stargate";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { toBech32, fromBech32 } from "@cosmjs/encoding";
+import chalk from "chalk";
 
-module.exports = async function getBalance(mnemonic, network) {
-  console.log(chalk.blue('Get balance'))
+export async function getBalance(mnemonic, network, denom) {
+  const balances = this.getBalances(mnemonic, network)
+  const balance = balances[denom]
+  return balance || 0
+}
+
+export async function getBalances (mnemonic, network) {
+  console.log(chalk.blue('Get balances'))
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic)
   const [{ address }] = await wallet.getAccounts()
   const rawAddress = fromBech32(address).data
-  const $stargateClient = await Stargate.StargateClient.connect(network.rpcNodeUrl)
-  const balance = await $stargateClient.getBalance(toBech32(network.addressName, rawAddress), network.denom)
+  const $stargateClient = await StargateClient.connect(network.rpcNodeUrl)
+  const balances = await $stargateClient.getAllBalances(toBech32(network.addressName, rawAddress))
   $stargateClient.disconnect()
-  console.log(chalk.blue('balance'), balance.amount)
-  return balance.amount
+  return balances.reduce((res, item) => {
+    res[item.denom] = item.amount ? +item.amount : 0
+    return res
+  }, {})
 }

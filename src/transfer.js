@@ -1,22 +1,21 @@
-const getLastRevisionHeight = require('./revision-height')
-const { DirectSecp256k1HdWallet, Registry } = require("@cosmjs/proto-signing");
-const { toBech32, fromBech32 } = require("@cosmjs/encoding");
-const { coins, coin } = require('@cosmjs/launchpad');
-const chalk = require('chalk');
-const { MsgTransfer } = require('cosmjs-types/ibc/applications/transfer/v1/tx');
-const { SigningStargateClient, defaultRegistryTypes } = require("@cosmjs/stargate");
+import { getLastRevisionHeight } from './revision-height';
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { SigningStargateClient } from "@cosmjs/stargate";
+import { toBech32, fromBech32 } from "@cosmjs/encoding";
+import { coins, coin } from "@cosmjs/launchpad";
+import registry from "./registry";
+import chalk from "chalk";
 
 module.exports = async function transfer(mnemonic, fromNetwork, toNetwork) {
   const lastRevisionHeight = await getLastRevisionHeight(fromNetwork.wss)
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic)
+  // const lastRevisionHeight = "334343"
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: fromNetwork.addressName })
   const [{address}] = await wallet.getAccounts()
   const rawAddress = fromBech32(address).data
-  const registry = new Registry(defaultRegistryTypes)
-  registry.register('/ibc.applications.transfer.v1.MsgTransfer', MsgTransfer)
 
   const m = {
     typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
-    value: MsgTransfer.fromPartial({
+    value: {
       sourcePort: "transfer",
       sourceChannel: "channel-0",
       token: coin(5990000, fromNetwork.denom),
@@ -26,7 +25,7 @@ module.exports = async function transfer(mnemonic, fromNetwork, toNetwork) {
         revisionNumber: "1",
         revisionHeight: lastRevisionHeight.toString()
       }
-    })
+    }
   }
 
   const client = await SigningStargateClient.connectWithSigner(fromNetwork.rpcNodeUrl, wallet, {registry})

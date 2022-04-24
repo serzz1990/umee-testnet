@@ -1,23 +1,29 @@
 {
-  "unee": {
+  "umee": {
     "addressName": "umee",
     "denom": "uumee",
-    "rpcNodeUrl": "https://rpc.festival.umeemania-1.network.umee.cc"
+    "denomInUmee": "uumee",
+    "rpcNodeUrl": "https://rpc.festival.umeemania-1.network.umee.cc",
+    "wss": "wss://rpc.festival.umeemania-1.network.umee.cc"
   },
   "cosmos": {
     "addressName": "cosmos",
     "denom": "uatom",
+    "denomInUmee": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
     "rpcNodeUrl": "https://rpc.flash.gaia-umeemania-1.network.umee.cc",
     "wss": "wss://rpc.flash.gaia-umeemania-1.network.umee.cc"
   },
   "osmo": {
     "addressName": "osmo",
     "denom": "uosmo",
-    "rpcNodeUrl": "https://api.wall.osmosis-umeemania-1.network.umee.cc"
+    "denomInUmee": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+    "rpcNodeUrl": "https://rpc.wall.osmosis-umeemania-1.network.umee.cc",
+    "wss": "wss://rpc.wall.osmosis-umeemania-1.network.umee.cc"
   },
   "juno": {
     "addressName": "juno",
     "denom": "ujuno",
-    "rpcNodeUrl": "https://api.section.juno-umeemania-1.network.umee.cc"
+    "rpcNodeUrl": "https://api.section.juno-umeemania-1.network.umee.cc",
+    "wss": "wss://api.section.juno-umeemania-1.network.umee.cc"
   }
 }
