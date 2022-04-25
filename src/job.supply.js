@@ -1,9 +1,9 @@
-console.log('RUN JOB TRANSFER');
+console.log('RUN JOB SUPPLY');
 
 import networks from './nerworks.json';
 import wallets from '../wallets.json';
-import { transfer } from './transfer';
 import { getStat } from "./stat";
+import {sendCollateral} from "./collateral";
 import chalk from "chalk";
 
 (async () => {
@@ -11,16 +11,16 @@ import chalk from "chalk";
     try {
       const { mnemonic } = wallet;
       const stat = await getStat(mnemonic);
-      [networks.cosmos, networks.juno, networks.osmo].map((network) => {
+
+      [networks.cosmos, networks.juno, networks.osmo].map(async (network) => {
         try {
-          const balance = stat.coins[network.addressName].balance[network.denom]
+          const balance = stat.coins.umee.balance[network.denomInUmee]
           if (balance > 10) {
-            return transfer({
+            await sendCollateral({
               mnemonic,
               from: network,
-              to: networks.umee,
               amount: balance
-            })
+            });
           }
         } catch (e) {
           console.log(chalk.red(`FAIL in ${network.addressName}`));

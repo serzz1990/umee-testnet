@@ -39,7 +39,7 @@ import chalk from "chalk";
   // })
   // await sendCollateral({
   //   mnemonic,
-  //   from: networks.osmo ,
+  //   from: networks.osmo,
   //   amount: 10
   // });
   // await getBorrow({

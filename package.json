@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node -r esm ./src/dev",
     "job": "nodemon  -r esm ./src/index.js",
-    "job:transfer": "node  -r esm ./src/job.transfer.js"
+    "job:transfer": "node  -r esm ./src/job.transfer.js",
+    "job:supply": "node  -r esm ./src/job.supply.js"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.28.4",
