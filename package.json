@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node -r esm ./src/index"
+    "dev": "node -r esm ./src/dev",
+    "job": "nodemon  -r esm ./src/index.js"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.28.4",
@@ -14,7 +15,9 @@
     "@cosmjs/proto-signing": "^0.28.4",
     "@cosmjs/stargate": "^0.28.4",
     "@cosmjs/tendermint-rpc": "^0.28.4",
+    "axios": "^0.26.1",
     "chalk": "^4.1.2",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.15"
   }
 }

@@ -1,3 +1,5 @@
+import { Get } from "./request";
+
 const { getTxs } = require("./transactions");
 import { umee } from "./nerworks.json";
 import { coins, coin } from "@cosmjs/launchpad";
@@ -6,7 +8,8 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import registry from "./registry";
 import chalk from "chalk";
 
-export async function sendLendAsset (mnemonic, network) {
+export async function sendCollateral ({ mnemonic, from, amount = 10 }) {
+  const network = from;
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'umee' })
   const [{address}] = await wallet.getAccounts()
   const collateralized = await checkCollateral(mnemonic, network)
@@ -14,7 +17,7 @@ export async function sendLendAsset (mnemonic, network) {
     typeUrl: '/umeenetwork.umee.leverage.v1beta1.MsgLendAsset',
     value: {
       lender: address,
-      amount: coin(10999500, network.denomInUmee)
+      amount: coin(amount * 1000000, network.denomInUmee)
     }
   }]
 
@@ -56,4 +59,18 @@ export async function checkCollateral (mnemonic, network) {
     `set_collateral_setting.denom='u/${network.denomInUmee}'`
   ])
   return !!result.pagination.total.toNumber()
+}
+
+export async function getCollateral (address, denom) {
+  const data = await Get('https://api.alley.umeemania-1.network.umee.cc/umee/leverage/v1beta1/collateral', {
+    params: { address, denom: 'u/' + denom }
+  })
+  return data.collateral[0] ? (+data.collateral[0].amount / 1000000) : 0
+}
+
+export async function getTotalCollateral (address) {
+  const data = await Get('https://api.alley.umeemania-1.network.umee.cc/umee/leverage/v1beta1/collateral_value', {
+    params: { address }
+  })
+  return data.collateral_value ? +data.collateral_value : 0
 }
