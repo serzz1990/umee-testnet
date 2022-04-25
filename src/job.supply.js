@@ -21,6 +21,8 @@ import chalk from "chalk";
               from: network,
               amount: balance
             });
+          } else {
+            console.log(chalk.green(`Tokens ${network.addressName} already supplied`));
           }
         } catch (e) {
           console.log(chalk.red(`FAIL in ${network.addressName}`));

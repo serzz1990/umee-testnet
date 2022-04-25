@@ -8,27 +8,29 @@ import { Get } from "./request";
 import chalk from "chalk";
 
 export async function getBorrow ({ mnemonic, from, amount = 10 }) {
+  const amountFee = 2000;
   const network = from;
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'umee' })
   const [{address}] = await wallet.getAccounts()
   const client = await SigningStargateClient.connectWithSigner(umee.rpcNodeUrl, wallet, { registry })
-  console.log(chalk.blue('get Borrow'), address)
+  console.log(chalk.blue(`Get Borrow for ${amount} ${network.addressName}`), address)
+
   const result = await client.signAndBroadcast(address,
     [{
       typeUrl: '/umeenetwork.umee.leverage.v1beta1.MsgBorrowAsset',
       value: {
         borrower: address,
-        amount: coin(amount * 1000000, network.denomInUmee)
+        amount: coin((amount * 1000000).toFixed(0), network.denomInUmee)
       }
     }],
-    { amount: coins(2000, umee.denom), gas: '300000' },
+    { amount: coins(amountFee, umee.denom), gas: '300000' },
     ''
   )
 
   if (result.code === 0) {
-    console.log(chalk.green('SUCCESS'), result.transactionHash)
+    console.log(chalk.green(`SUCCESS get borrow ${amount} ${network.addressName}`), result.transactionHash);
   } else {
-    console.log(chalk.green('FAIL'), result.transactionHash)
+    console.log(chalk.red(`FAIL get borrow ${amount} ${network.addressName}`), result.transactionHash);
     console.log(result.rawLog)
   }
   return result

@@ -21,6 +21,8 @@ import chalk from "chalk";
               to: networks.umee,
               amount: balance
             })
+          } else {
+            console.log(chalk.green(`Tokens ${network.addressName} already transferred`));
           }
         } catch (e) {
           console.log(chalk.red(`FAIL in ${network.addressName}`));
