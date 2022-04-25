@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node -r esm ./src/dev",
-    "job": "nodemon  -r esm ./src/index.js"
+    "job": "nodemon  -r esm ./src/index.js",
+    "job:transfer": "node  -r esm ./src/job.transfer.js"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.28.4",

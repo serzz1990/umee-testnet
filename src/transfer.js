@@ -8,6 +8,7 @@ import chalk from "chalk";
 import { umee } from "./nerworks.json";
 
 export async function transfer({ mnemonic, from, to = umee, amount = 10 }) {
+  const feeAmount = 10000;
   const toNetwork = to;
   const fromNetwork = from;
   const lastRevisionHeight = await getLastRevisionHeight(fromNetwork);
@@ -20,7 +21,7 @@ export async function transfer({ mnemonic, from, to = umee, amount = 10 }) {
     value: {
       sourcePort: "transfer",
       sourceChannel: "channel-0",
-      token: coin(amount * 1000000, fromNetwork.denom),
+      token: coin(amount * 1000000 - feeAmount, fromNetwork.denom),
       sender: toBech32(fromNetwork.addressName, rawAddress),
       receiver: toBech32(toNetwork.addressName, rawAddress),
       timeoutHeight: {
@@ -29,15 +30,14 @@ export async function transfer({ mnemonic, from, to = umee, amount = 10 }) {
       }
     }
   }
-
-  const fee = {amount: coins(10000, fromNetwork.denom), gas: "1000000"};
-  console.log(chalk.blue('Send tx'));
+  const fee = {amount: coins(feeAmount, fromNetwork.denom), gas: "1000000"};
+  console.log(chalk.blue(`Send tx from ${fromNetwork.addressName} to ${toNetwork.addressName} amount: ${amount}`));
   const result = await client.signAndBroadcast(address, [m], fee, "");
 
   if (result.code === 0) {
-    console.log(chalk.green('SUCCESS'), result.transactionHash);
+    console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}`), result.transactionHash);
   } else {
-    console.log(chalk.green('FAIL'), result.transactionHash);
+    console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}`), result.transactionHash);
     console.log(result.rawLog);
   }
 
