@@ -7,22 +7,25 @@ import { getStat } from "./stat";
 import chalk from "chalk";
 
 (async () => {
-  const { mnemonic } = wallets[0];
-  const stat = await getStat(mnemonic);
-
-  [networks.cosmos, networks.juno, networks.osmo].map((network) => {
+  for (const wallet of wallets) {
     try {
-      const balance = stat.coins[network.addressName].balance[network.denom]
-      if (balance > 10) {
-        return transfer({
-          mnemonic,
-          from: network,
-          to: networks.umee,
-          amount: balance
-        })
-      }
-    } catch (e) {
-      console.log(chalk.red(`FAIL in ${network.addressName}`));
-    }
-  })
-})()
+      const { mnemonic } = wallet;
+      const stat = await getStat(mnemonic);
+      [networks.cosmos, networks.juno, networks.osmo].map((network) => {
+        try {
+          const balance = stat.coins[network.addressName].balance[network.denom]
+          if (balance > 10) {
+            return transfer({
+              mnemonic,
+              from: network,
+              to: networks.umee,
+              amount: balance
+            })
+          }
+        } catch (e) {
+          console.log(chalk.red(`FAIL in ${network.addressName}`));
+        }
+      })
+    } catch (e) {}
+  }
+})();
