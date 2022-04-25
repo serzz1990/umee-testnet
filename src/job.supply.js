@@ -1,4 +1,4 @@
-console.log('RUN JOB SUPPLY');
+console.log('RUN JOB SUPPLY', new Date());
 
 import networks from './nerworks.json';
 import wallets from '../wallets.json';
@@ -28,6 +28,8 @@ import chalk from "chalk";
           console.log(chalk.red(`FAIL in ${network.addressName}`));
         }
       })
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 })();

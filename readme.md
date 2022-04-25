@@ -15,3 +15,4 @@
 - transfer tokens to Umee `npm run job:transfer`
 - supply tokens `npm run job:supply`
 - borrow tokens `npm run job:borrow`
+- start all jobs `npm run job:all`

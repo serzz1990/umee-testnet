@@ -7,7 +7,8 @@
     "job": "nodemon  -r esm ./src/index.js",
     "job:transfer": "node  -r esm ./src/job.transfer.js",
     "job:supply": "node  -r esm ./src/job.supply.js",
-    "job:borrow": "node  -r esm ./src/job.borrow.js"
+    "job:borrow": "node  -r esm ./src/job.borrow.js",
+    "job:all": "nodemon -r esm ./src/job.all.js"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.28.4",
@@ -21,6 +22,7 @@
     "axios": "^0.26.1",
     "chalk": "^4.1.2",
     "esm": "^3.2.25",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "shell": "^0.9.4"
   }
 }

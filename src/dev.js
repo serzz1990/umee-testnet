@@ -16,21 +16,6 @@ import chalk from "chalk";
   const stat = await getStat(mnemonic);
   // console.log(stat)
 
-  [networks.cosmos, networks.juno, networks.osmo].map((network) => {
-    try {
-      const balance = stat.coins[network.addressName].balance[network.denom]
-      if (balance > 10) {
-        return transfer({
-          mnemonic,
-          from: network,
-          to: networks.umee,
-          amount: balance
-        })
-      }
-    } catch (e) {
-      console.log(chalk.red(`FAIL in ${network.addressName}`));
-    }
-  })
   // await transfer({
   //   mnemonic,
   //   from: networks.juno,

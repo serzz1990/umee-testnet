@@ -1,4 +1,4 @@
-console.log('RUN JOB BORROW');
+console.log('RUN JOB BORROW', new Date());
 
 import networks from './nerworks.json';
 import wallets from '../wallets.json';
@@ -21,15 +21,6 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
           const tokenPrice = stat.prices[network.addressName];
           const amountBorrowTokens = amountBorrowUSD / tokenPrice;
 
-          // console.log('network', network.addressName);
-          // console.log('borrowLimitPercent', stat.borrowLimitPercent);
-          // console.log('borrowLimit', stat.borrowLimit);
-          // console.log('totalBorrowed', stat.totalBorrowed);
-          // console.log('tokenPrice', tokenPrice);
-          //
-          // console.log('amountBorrowUSD', amountBorrowUSD);
-          // console.log('amountBorrowTokens', amountBorrowTokens);
-
           await getBorrow({
             mnemonic,
             from: network,
@@ -42,7 +33,7 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
 
       console.log(chalk.green(`Can't borrow anymore`));
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
 })();
