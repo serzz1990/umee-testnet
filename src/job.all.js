@@ -1,8 +1,11 @@
+import {sendMessage} from "./telegram";
+
 const { exec } = require("child_process");
 import { promisify } from "util";
 const sleep = promisify(setTimeout);
 
 console.log('Job:all started');
+sendMessage('Job:all started');
 
 (async function JobTransfer (delay = 0) {
   await sleep(delay);
