@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node -r esm ./src/dev",
     "job": "nodemon  -r esm ./src/index.js",
+    "tg:chatid": "node -r esm src/telegram/chatid.js",
     "job:transfer": "node  -r esm ./src/job.transfer.js",
     "job:supply": "node  -r esm ./src/job.supply.js",
     "job:borrow": "node  -r esm ./src/job.borrow.js",
@@ -21,7 +22,10 @@
     "@cosmjs/tendermint-rpc": "^0.28.4",
     "axios": "^0.26.1",
     "chalk": "^4.1.2",
+    "dotenv": "^16.0.0",
     "esm": "^3.2.25",
+    "ethers": "^5.6.4",
+    "node-telegram-bot-api": "^0.57.0",
     "nodemon": "^2.0.15",
     "shell": "^0.9.4"
   }

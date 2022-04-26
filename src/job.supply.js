@@ -1,20 +1,29 @@
-console.log('RUN JOB SUPPLY', new Date());
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { sendCollateral } from "./collateral";
+import { wallets } from './wallets'
+import { getBalance } from "./bank";
+import { promisify } from "util";
 
-import networks from './nerworks.json';
-import wallets from '../wallets.json';
-import { getStat } from "./stat";
-import {sendCollateral} from "./collateral";
 import chalk from "chalk";
+import networks from './nerworks.json';
+
+const sleep = promisify(setTimeout);
 
 (async () => {
-  for (const wallet of wallets) {
+  console.log(`JOB SUPPLY: started (${new Date()})`);
+  for (const [index, wallet] of wallets.entries()) {
+    console.log(`Wallet ${index + 1}`);
+    continue;
     try {
       const { mnemonic } = wallet;
-      const stat = await getStat(mnemonic);
+      const walletUmee = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: networks.umee.addressName });
+      const [{ address: addressUmee }] = await walletUmee.getAccounts();
+      const balances = await getBalance(addressUmee, networks.umee);
 
-      [networks.cosmos, networks.juno, networks.osmo].map(async (network) => {
+      for(const network of [networks.juno, networks.osmo]) {
         try {
-          const balance = stat.coins.umee.balance[network.denomInUmee]
+          const balance = balances[network.denomInUmee] || 0;
+          console.log('balance', balance, network.addressName);
           if (balance > 10) {
             await sendCollateral({
               mnemonic,
@@ -22,14 +31,16 @@ import chalk from "chalk";
               amount: balance
             });
           } else {
-            console.log(chalk.green(`Tokens ${network.addressName} already supplied`));
+            console.log(chalk.green(`Token ${network.addressName} already supplied`));
           }
         } catch (e) {
-          console.log(chalk.red(`FAIL in ${network.addressName}`));
+          console.log(chalk.red(`FAIL in ${network.addressName}`, e));
         }
-      })
+        await sleep(1000);
+      }
     } catch (e) {
       console.log(e);
     }
   }
+  console.log(`JOB SUPPLY: ended (${new Date()})`);
 })();

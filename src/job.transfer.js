@@ -1,35 +1,46 @@
-console.log('RUN JOB TRANSFER', new Date());
+import { wallets } from './wallets'
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { getBalance } from "./bank";
+import { transfer } from './transfer';
+import { promisify } from "util";
 
 import networks from './nerworks.json';
-import wallets from '../wallets.json';
-import { transfer } from './transfer';
-import { getStat } from "./stat";
 import chalk from "chalk";
 
+const sleep = promisify(setTimeout);
+
 (async () => {
-  for (const wallet of wallets) {
+  console.log(`JOB TRANSFER: started (${new Date()})`);
+  for (const [index, wallet] of wallets.entries()) {
+    console.log(`Wallet ${index + 1}`);
+
     try {
       const { mnemonic } = wallet;
-      const stat = await getStat(mnemonic);
-      [networks.cosmos, networks.juno, networks.osmo].map((network) => {
+      for(const network of [networks.cosmos, networks.juno, networks.osmo]) {
         try {
-          const balance = stat.coins[network.addressName].balance[network.denom]
+          const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: network.addressName });
+          const [{address}] = await wallet.getAccounts();
+          const balances = await getBalance(address, network);
+          const balance = balances[network.denom] || 0;
+          console.log(network.addressName, 'balance', network.denom, balance)
           if (balance > 10) {
-            return transfer({
+            await transfer({
               mnemonic,
               from: network,
               to: networks.umee,
               amount: balance
             })
           } else {
-            console.log(chalk.green(`Tokens ${network.addressName} already transferred`));
+            console.log(chalk.green(`Token ${network.addressName} already transferred`));
           }
         } catch (e) {
           console.log(chalk.red(`FAIL in ${network.addressName}`));
         }
-      })
+        await sleep(1000);
+      }
     } catch (e) {
       console.log(e);
     }
   }
+  console.log(`JOB TRANSFER: ended (${new Date()})`);
 })();

@@ -9,13 +9,20 @@ import { getCollateral, sendCollateral } from "./collateral";
 import { getBorrow, getBorrowed } from "./borrow";
 import { getExchangeRates } from "./exchange";
 import { getStat } from "./stat";
+import {getEthWallet, sendToEth} from './eth'
 import chalk from "chalk";
 
 (async () => {
   const { mnemonic } = wallets[0];
-  const stat = await getStat(mnemonic);
+  // const stat = await getStat(mnemonic);
   // console.log(stat)
-
+  // const ethWallet = await getEthWallet(mnemonic);
+  sendToEth({
+    mnemonic,
+    from: networks.cosmos,
+    amount: 10
+  })
+  // console.log('ethWallet', ethWallet)
   // await transfer({
   //   mnemonic,
   //   from: networks.juno,

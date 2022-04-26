@@ -1,14 +1,7 @@
-# Start 
-
+# Getting Started 
 - Install deps: `npm install`
-- create file `wallet.json`. For example: `wallets.example.json`
-- update logic in `./src/index.js`
-- run job `npm run job`
-
-# For Dev 
-
-- write test code in `./src/dev.js`
-- run script `npm run dev`
+- create file `.env`. For example: `.env.example`
+- create file `wallets.json`. For example: `wallets.example.json`
 
 # Jobs
 
@@ -16,3 +9,11 @@
 - supply tokens `npm run job:supply`
 - borrow tokens `npm run job:borrow`
 - start all jobs `npm run job:all`
+
+# Telegram notify
+
+- create tg bot [here](https://t.me/BotFather)
+- add you tg token to `.env`
+- write any message into bot
+- get chat id `npm run tg:chatid`
+- add chat id to `.env`

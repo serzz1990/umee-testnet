@@ -2,70 +2,55 @@ import {DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
 import {SigningStargateClient} from "@cosmjs/stargate";
 import registry from "./registry";
 import {coin, coins} from "@cosmjs/launchpad";
+import networks from './nerworks.json';
 import chalk from "chalk";
-import {umee} from "./nerworks.json";
+import { umee } from "./nerworks.json";
+import { ethers } from "ethers";
+import {fromBech32, toBech32} from "@cosmjs/encoding";
+import {add} from "nodemon/lib/rules";
+const RPC = 'https://goerli.infura.io/v3/';
+const provider = new ethers.providers.JsonRpcProvider(RPC);
 
-export async function sendToEth ({ mnemonic, from, to, amount = 10 }) {
+export async function getEthWallet (mnemonic) {
+  const wallet = await ethers.Wallet.fromMnemonic(mnemonic);
+  // wallet.connect(provider);
+  // console.log('wallet', wallet.address)
+  // console.log(
+    // await provider.getBalance('ricmoo.eth')
+  // );
+  return wallet
+}
+
+export async function sendToEth ({ mnemonic, from, amount = 10 }) {
   const fromNetwork = from;
-  const toNetwork = to;
+  const walletEth = await ethers.Wallet.fromMnemonic(mnemonic);
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: fromNetwork.addressName })
   const [{address}] = await wallet.getAccounts()
+  const umeeAddress = toBech32(networks.umee.addressName, fromBech32(address).data)
   const client = await SigningStargateClient.connectWithSigner(fromNetwork.rpcNodeUrl, wallet, {registry})
 
-  console.log(chalk.blue('Send to eth'))
+  console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
+
   const result = await client.signAndBroadcast(address, [{
     typeUrl: '/gravity.v1.MsgSendToEth',
     value: {
-      sender: address,
-      eth_dest: "eth_address",
-      amount: coin(35278776, 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2'),
-      bridge_fee: coin(100000000, 'ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2')
+      sender: umeeAddress,
+      ethDest: walletEth.address,
+      amount: coin(amount * 1000000, from.denomInUmee),
+      bridgeFee: coin(100000, from.denomInUmee)
     }
   }], {
-    amount: coins(2000, fromNetwork.denom),
+    amount: coins(2000, networks.umee.denom),
     gas: "200000"
   }, "")
 
   if (result.code === 0) {
-    console.log(chalk.green('SUCCESS'), result.transactionHash)
+    console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
   } else {
-    console.log(chalk.green('FAIL'), result.transactionHash)
+    console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
     console.log(result.rawLog)
   }
 
   client.disconnect()
   return result
 }
-
-// {
-//   "chain_id": "umeemania-1",
-//   "account_number": "71745",
-//   "sequence": "18",
-//   "fee": {
-//   "gas": "200000",
-//     "amount": [
-//     {
-//       "denom": "uumee",
-//       "amount": "2000"
-//     }
-//   ]
-// },
-//   "msgs": [
-//   {
-//     "type": "gravity/MsgSendToEth",
-//     "value": {
-//       "sender": "umee1c9mavwtpw94kqep90a2qfzfyg0amp26k7r8leg",
-//       "eth_dest": "eth_address",
-//       "amount": {
-//         "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-//         "amount": "35278776"
-//       },
-//       "bridge_fee": {
-//         "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-//         "amount": "100000000"
-//       }
-//     }
-//   }
-// ],
-//   "memo": "lama"
-// }

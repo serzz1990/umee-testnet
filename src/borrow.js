@@ -13,7 +13,7 @@ export async function getBorrow ({ mnemonic, from, amount = 10 }) {
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'umee' })
   const [{address}] = await wallet.getAccounts()
   const client = await SigningStargateClient.connectWithSigner(umee.rpcNodeUrl, wallet, { registry })
-  console.log(chalk.blue(`Get Borrow for ${amount} ${network.addressName}`), address)
+  console.log(chalk.blue(`Borrow for ${amount} ${network.addressName}`), address)
 
   const result = await client.signAndBroadcast(address,
     [{
@@ -28,9 +28,9 @@ export async function getBorrow ({ mnemonic, from, amount = 10 }) {
   )
 
   if (result.code === 0) {
-    console.log(chalk.green(`SUCCESS get borrow ${amount} ${network.addressName}`), result.transactionHash);
+    console.log(chalk.green(`SUCCESS borrow ${amount} ${network.addressName}`), result.transactionHash);
   } else {
-    console.log(chalk.red(`FAIL get borrow ${amount} ${network.addressName}`), result.transactionHash);
+    console.log(chalk.red(`FAIL borrow ${amount} ${network.addressName}`), result.transactionHash);
     console.log(result.rawLog)
   }
   return result

@@ -1,32 +1,38 @@
-console.log('RUN JOB BORROW', new Date());
+import { wallets } from './wallets'
+import { getBorrowStat } from "./stat";
+import { getBorrow } from "./borrow";
+import { promisify } from "util";
+import { getPrices } from "./bank";
 
 import networks from './nerworks.json';
-import wallets from '../wallets.json';
-import { getStat } from "./stat";
-import { getBorrow } from "./borrow";
 import chalk from "chalk";
 
+const sleep = promisify(setTimeout);
 const randomInArray = (array) => array[Math.floor(Math.random() * array.length)];
 
 (async () => {
-  for (const wallet of wallets) {
+  console.log(`JOB BORROW: started (${new Date()})`);
+
+  for (const [index, wallet] of wallets.entries()) {
+    console.log(`Wallet ${index + 1}`);
+
     try {
       const { mnemonic } = wallet;
-      const stat = await getStat(mnemonic);
-      const limitPercent = 80
-      if (stat.borrowLimitPercent < limitPercent) {
-        const network = randomInArray([networks.cosmos, networks.juno, networks.osmo]);
-        const amountBorrowUSD = stat.borrowLimit * (limitPercent/100) - stat.totalBorrowed;
-        if (amountBorrowUSD > 0) {
-          const tokenPrice = stat.prices[network.addressName];
-          const amountBorrowTokens = amountBorrowUSD / tokenPrice;
+      const limitPercent = 80;
+      const network = randomInArray([networks.cosmos, networks.juno, networks.osmo]);
+      const borrowStat = await getBorrowStat(mnemonic);
+      const prices = await getPrices();
 
+      if (borrowStat.borrowLimitPercent < limitPercent) {
+        const amountBorrowUSD = borrowStat.borrowLimit * (limitPercent/100) - borrowStat.totalBorrowed;
+        if (amountBorrowUSD > 0) {
+          const tokenPrice = prices[network.denom];
+          const amountBorrowTokens = amountBorrowUSD / tokenPrice;
           await getBorrow({
             mnemonic,
             from: network,
             amount: amountBorrowTokens
           });
-
           continue;
         }
       }
@@ -35,6 +41,7 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
     } catch (e) {
       console.log(e);
     }
+    await sleep(1000);
   }
+  console.log(`JOB BORROW: ended (${new Date()})`);
 })();
-

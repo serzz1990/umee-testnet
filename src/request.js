@@ -10,7 +10,7 @@ export async function Get (url, requestConfig) {
       const { data } = await axios.get(url, requestConfig)
       return data
     } catch (e) {
-      const timout = 25000 * (totalTryCount - tryCount)
+      const timout = 25000 * (totalTryCount - tryCount) + 3000
       tryCount--;
       error = e
       console.log(`Fail request (${totalTryCount - tryCount}/${totalTryCount + 1}) ${url}, next request in ${timout/1000}s`)

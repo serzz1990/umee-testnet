@@ -4,23 +4,26 @@ const sleep = promisify(setTimeout);
 
 console.log('Job:all started');
 
-(async function JobTransfer () {
+(async function JobTransfer (delay = 0) {
+  await sleep(delay);
   runJob('npm run job:transfer');
   await sleep(3*60*60*1000); //3h
   JobTransfer();
-})();
+})(0); // 0m
 
-(async function JobSupply () {
+(async function JobSupply (delay = 0) {
+  await sleep(delay);
   runJob('npm run job:supply');
-  await sleep(1*60*60*1000); //1h
+  await sleep(30*60*1000); // 30m
   JobSupply();
-})();
+})(15*60*1000); // 15m
 
-(async function JobBorrow () {
+(async function JobBorrow (delay = 0) {
+  await sleep(delay);
   runJob('npm run job:borrow');
-  await sleep(1*60*60*1000); //1h
+  await sleep(30*60*1000); // 30m
   JobBorrow();
-})();
+})(30*60*1000); // 30m
 
 function runJob (command) {
   console.log(command);
