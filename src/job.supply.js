@@ -13,7 +13,6 @@ const sleep = promisify(setTimeout);
   console.log(`JOB SUPPLY: started (${new Date()})`);
   for (const [index, wallet] of wallets.entries()) {
     console.log(`Wallet ${index + 1}`);
-    continue;
     try {
       const { mnemonic } = wallet;
       const walletUmee = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: networks.umee.addressName });
