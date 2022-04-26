@@ -29,7 +29,7 @@ console.log('Job:all started');
   await sleep(delay);
   runJob('npm run job:stat');
   JobStat(delay);
-})(60*60*1000); // 60m
+})(6*60*60*1000); // 6h
 
 function runJob (command) {
   console.log(command);
