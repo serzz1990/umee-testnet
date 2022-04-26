@@ -25,6 +25,12 @@ console.log('Job:all started');
   JobBorrow();
 })(30*60*1000); // 30m
 
+(async function JobStat (delay = 0) {
+  await sleep(delay);
+  runJob('npm run job:stat');
+  JobStat(delay);
+})(60*60*1000); // 60m
+
 function runJob (command) {
   console.log(command);
   exec(command, (error, stdout, stderr) => {

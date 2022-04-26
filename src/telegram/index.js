@@ -1,6 +1,7 @@
 import '../env'
 import Telegram from 'node-telegram-bot-api'
 import axios from "axios";
+import { templateBorrowStat } from "./templates";
 
 export const bot = new Telegram(process.env.TELEGRAM_TOKEN, { polling: false });
 
@@ -15,10 +16,14 @@ export async function getLastMessage () {
   return null;
 }
 
+export async function sendBorrowStat (stats) {
+  const messages = stats.map(templateBorrowStat);
+  await sendMessage(messages.join(` `));
+}
+
 export async function sendMessage (text) {
   if (!process.env.TELEGRAM_TOKEN || !process.env.TELEGRAM_CHAT_ID) return;
-  const options = {};
   try {
-    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text, options);
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, text, { parse_mode: 'HTML' });
   } catch (e) {}
 }

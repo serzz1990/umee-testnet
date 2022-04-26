@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "node -r esm ./src/dev",
-    "job": "nodemon  -r esm ./src/index.js",
+    "job": "nodemon -r esm ./src/index.js",
     "tg:chatid": "node -r esm src/telegram/chatid.js",
-    "job:transfer": "node  -r esm ./src/job.transfer.js",
-    "job:supply": "node  -r esm ./src/job.supply.js",
-    "job:borrow": "node  -r esm ./src/job.borrow.js",
+    "job:transfer": "node -r esm ./src/job.transfer.js",
+    "job:supply": "node -r esm ./src/job.supply.js",
+    "job:borrow": "node -r esm ./src/job.borrow.js",
+    "job:stat": "node -r esm ./src/job.stat.js",
     "job:all": "nodemon -r esm ./src/job.all.js"
   },
   "dependencies": {
