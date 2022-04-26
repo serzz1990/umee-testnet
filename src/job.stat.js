@@ -18,7 +18,7 @@ const sleep = promisify(setTimeout);
       console.log(e);
       stats.push(null);
     }
-    await sleep(1000);
+    await sleep(3000);
   }
   await sendBorrowStat(stats);
   console.log(`JOB STAT: ended (${new Date()})`);
