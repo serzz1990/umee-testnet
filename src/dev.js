@@ -1,5 +1,3 @@
-console.log('RUN DEV');
-
 import networks from './nerworks.json';
 import wallets from '../wallets.json';
 import { getBalance, getBalances } from './balance';
@@ -9,19 +7,38 @@ import { getCollateral, sendCollateral } from "./collateral";
 import { getBorrow, getBorrowed } from "./borrow";
 import { getExchangeRates } from "./exchange";
 import { getStat } from "./stat";
-import {getEthWallet, sendToEth} from './eth'
+import {getEthAccount, sendToEth, supplyFromEth, getEthBalance, borrowFromEth} from './eth'
 import chalk from "chalk";
 
 (async () => {
-  const { mnemonic } = wallets[0];
+  console.log('RUN DEV');
+
+  const { mnemonic, ethPrivateKey } = wallets[0];
   // const stat = await getStat(mnemonic);
   // console.log(stat)
   // const ethWallet = await getEthWallet(mnemonic);
-  sendToEth({
+  // console.log(await getEthBalance({ mnemonic }));
+
+  borrowFromEth({
     mnemonic,
+    privateKey: ethPrivateKey,
     from: networks.cosmos,
-    amount: 10
+    amount: 100000
   })
+  // supplyFromEth({
+  //   mnemonic,
+  //   privateKey: ethPrivateKey,
+  //   from: networks.cosmos,
+  //   amount: 100000
+  // })
+
+  // sendToEth({
+  //   mnemonic,
+  //   privateKey: ethPrivateKey,
+  //   from: networks.cosmos,
+  //   amount: 10
+  // })
+
   // console.log('ethWallet', ethWallet)
   // await transfer({
   //   mnemonic,
