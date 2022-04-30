@@ -5,7 +5,11 @@
     "denomInUmee": "uumee",
     "rpcNodeUrl": "https://rpc.festival.umeemania-1.network.umee.cc",
     "api": "https://api.alley.umeemania-1.network.umee.cc",
-    "ethToken": ""
+    "eth": {
+      "token": "0x389E749bf12c864814a2Ea94Ea92B95833B475ed",
+      "borrow": "",
+      "supply": ""
+    }
   },
   "cosmos": {
     "addressName": "cosmos",
@@ -13,7 +17,11 @@
     "denomInUmee": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
     "rpcNodeUrl": "https://rpc.flash.gaia-umeemania-1.network.umee.cc",
     "api": "https://api.flash.gaia-umeemania-1.network.umee.cc",
-    "ethToken": "0x110be24b5515dd08c0918b63660ae4ee5ced3c9c"
+    "eth": {
+      "token": "0x110bE24B5515DD08c0918B63660AE4eE5cEd3c9c",
+      "borrow": "0x4bae106fdec90bc7e0e1d2658e2f81f4cefc6921",
+      "supply": "0x9939d1E8eF193008F902bFCc5c7d7278332C58Bf"
+    }
   },
   "osmo": {
     "addressName": "osmo",

@@ -8,9 +8,9 @@ import { umee } from "../nerworks.json";
 import { ethers } from "ethers";
 const RPCUrl = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
 import Web3 from 'web3';
-import {ethDecoder, depositABI, borrowABI} from "./decoder";
+import {ethDecoder, depositABI, borrowABI, ERC20TokenABI} from "./decoder";
 
-// https://web3js.readthedocs.io/en/v1.7.3/web3-eth-abi.html#eth-abi
+const contractCosmosAddress = '0x75d5e88adf8f3597c7c3e4a930544fb48089c779';
 
 export async function getEthAccount ({ mnemonic, privateKey }) {
   const web3 = new Web3(RPCUrl);
@@ -57,101 +57,113 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   return result
 }
 
-export async function getEthBalance ({ mnemonic, privateKey }) {
+export async function getEthBalance ({ mnemonic, privateKey, tokenAddress }) {
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
-  return web3.eth.getBalance(account.address);
+
+  if (tokenAddress) {
+    try {
+      let contract = new web3.eth.Contract(ERC20TokenABI, tokenAddress);
+      const count = await contract.methods.balanceOf(account.address).call();
+      return count ? count / 1000000 : 0;
+    } catch (e) {
+      return 0;
+    }
+  } else {
+    return web3.eth.getBalance(account.address);
+  }
 }
 
-export async function supplyFromEth ({ mnemonic, privateKey, from, amount = 500000 }) {
+export async function supplyFromEth ({ mnemonic, privateKey, from, amount = 100000 }) {
   const web3 = new Web3(RPCUrl);
-  const contractAddress = '0x75d5e88adf8f3597c7c3e4a930544fb48089c779';
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
-
   const txConfig = {
     from: account.address,
-    to: contractAddress,
+    to: contractCosmosAddress,
     nonce: txCount,
     value: '0',
     type: 2,
-    data: web3.eth.abi.encodeFunctionCall(depositABI, [from.ethToken, amount, account.address, '0'])
+    data: web3.eth.abi.encodeFunctionCall(depositABI, [from.eth.token, (amount.toFixed(0) * 1000000).toString(), account.address, '0'])
   }
   txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
-  console.log('gas', txConfig.gas)
   const txSign = await account.signTransaction(txConfig);
   console.log(chalk.blue(`Supply ${amount} ${from.addressName}/umee from ETH`));
 
-  return new Promise((resolve) => {
-    web3.eth.sendSignedTransaction(txSign.rawTransaction)
-      .on('confirmation', (confirmationNumber, receipt) => {
-        if (confirmationNumber === 5) {
-          console.log(chalk.green(`SUCCESS supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
-          resolve()
-        }
-      })
-      .on('error', (err) => {
-        console.log(chalk.red(`FAIL supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
-        console.log(err)
-        resolve()
-      });
-  })
+  try {
+    await web3.eth.sendSignedTransaction(txSign.rawTransaction)
+    console.log(chalk.green(`SUCCESS supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
+  } catch (e) {
+    console.log(chalk.red(`FAIL supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
+  }
 }
 
-
-export async function borrowFromEth ({ mnemonic, privateKey, from, amount = 500000 }) {
+export async function borrowFromEth ({ mnemonic, privateKey, from, amount = 100000 }) {
+  // https://web3js.readthedocs.io/en/v1.7.3/web3-eth-contract.html#id27
   const web3 = new Web3(RPCUrl);
-  const contractAddress = '0x75d5e88adf8f3597c7c3e4a930544fb48089c779';
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
   const txConfig = {
     from: account.address,
-    to: contractAddress,
+    to: contractCosmosAddress,
     nonce: txCount,
     value: '0',
     type: 2,
-    data: web3.eth.abi.encodeFunctionCall(borrowABI, [from.ethToken, amount, '2', '0', account.address])
+    data: web3.eth.abi.encodeFunctionCall(borrowABI, [from.eth.token, (amount.toFixed(0) * 1000000).toString(), '2', '0', account.address])
   }
-  // txConfig.gas = 804820
   txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
-  console.log('gas', txConfig.gas);
   const txSign = await account.signTransaction(txConfig);
   console.log(chalk.blue(`Borrow ${amount} ${from.addressName}/umee from ETH`));
 
-  return new Promise((resolve) => {
-    web3.eth.sendSignedTransaction(txSign.rawTransaction)
-      .on('confirmation', (confirmationNumber, receipt) => {
-        if (confirmationNumber === 5) {
-          console.log(chalk.green(`SUCCESS Borrow ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
-          resolve()
-        }
-      })
-      .on('error', (err) => {
-        console.log(chalk.red(`FAIL Borrow ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
-        console.log(err)
-        resolve()
-      });
-  })
+  try {
+    await web3.eth.sendSignedTransaction(txSign.rawTransaction)
+    console.log(chalk.green(`SUCCESS Borrow ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
+  } catch (e) {
+    console.log(chalk.red(`FAIL Borrow ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
+  }
 }
 
-// const tx = await web3.eth.getTransaction('0x5fb2240752c1135b419933b69f4dc9b6ebd0ff5d87217e55923df2c483cd7532')
-// console.log(ethDecoder.decodeMethod(tx.input));
-// const decodedData =
-// console.log(tx)
+export async function approveTokens ({ mnemonic, privateKey, from }) {
+  const web3 = new Web3(RPCUrl);
+  const contract = new web3.eth.Contract(ERC20TokenABI, from.eth.token);
+  const account = await getEthAccount({ mnemonic, privateKey });
+  const txCount = await web3.eth.getTransactionCount(account.address);
+  const txConfig = {
+    from: account.address,
+    to: from.eth.token,
+    nonce: txCount,
+    value: '0',
+    type: 2,
+    data: contract.methods.approve(contractCosmosAddress, '115792089237316195423570985008687907853269984665640564039457584007913129639935').encodeABI()
+  }
+  txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
 
-// 0x05fdc86C4209aa60f1D374eea0c8247093a060aD
-// 0x110bE24B5515DD08c0918B63660AE4eE5cEd3c9c
-// 0x095ea7b300000000000000000000000075d5e88adf8f3597c7c3e4a930544fb48089c779ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-// atom
-// https://goerli.etherscan.io/tx/0x4c7530023781891447162f9f52915ff2ce0eea5118b74e7d27a1fe5d09fcfc26
+  const txSign = await account.signTransaction(txConfig);
+  console.log(chalk.blue(`approve tokens ${from.addressName}/umee in ETH`));
 
+  try {
+    await web3.eth.sendSignedTransaction(txSign.rawTransaction)
+    console.log(chalk.green(`SUCCESS approve tokens ${from.addressName}/umee in ETH`), txSign.transactionHash);
+  } catch (e) {
+    console.log(chalk.red(`FAIL approve tokens ${from.addressName}/umee in ETH`), txSign.transactionHash);
+  }
+}
 
-// suppy
-// https://goerli.etherscan.io/tx/0x5fb2240752c1135b419933b69f4dc9b6ebd0ff5d87217e55923df2c483cd7532
-// atom
-// asset 0x110be24b5515dd08c0918b63660ae4ee5ced3c9c
+export async function getEthStat ({ mnemonic, privateKey, network }) {
+  const [balance, borrow, supply] = await Promise.all([
+    getEthBalance({ mnemonic, privateKey, tokenAddress: network.eth.token }),
+    getEthBalance({ mnemonic, privateKey, tokenAddress: network.eth.borrow }),
+    getEthBalance({ mnemonic, privateKey, tokenAddress: network.eth.supply })
+  ])
+  const borrowLimit = supply * 0.8;
+  const borrowPercent = borrowLimit ? borrow * 100 / borrowLimit : 0;
+  return { balance, borrow, supply, borrowLimit, borrowPercent }
+}
 
-
-
-// umee
-// contract 0x9939d1E8eF193008F902bFCc5c7d7278332C58Bf
+export async function getApproveTokens ({ mnemonic, privateKey, tokenAddress }) {
+  const web3 = new Web3(RPCUrl);
+  const account = await getEthAccount({ mnemonic, privateKey });
+  const contract = new web3.eth.Contract(ERC20TokenABI, tokenAddress);
+  const result = await contract.methods.allowance(account.address, contractCosmosAddress).call();
+  return result || 0
+}

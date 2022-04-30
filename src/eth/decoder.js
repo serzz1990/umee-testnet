@@ -20,21 +20,6 @@ export const depositABI = {
   ]
 }
 
-export const approveABI = {
-  "name": "approve",
-  "constant": true,
-  "payable": false,
-  "type": "function",
-  "inputs": [
-    {"type": "address", "name": "spender"},
-    {"type": "uint256", "name": "tokens"}
-  ],
-  "outputs": [
-    {"type": "address", "name": "spender"},
-    {"type": "uint256", "name": "tokens"}
-  ]
-}
-
 export const borrowABI = {
   "name": "borrow",
   "constant": true,
@@ -56,6 +41,27 @@ export const borrowABI = {
   ]
 }
 
-abiDecoder.addABI([depositABI, approveABI, borrowABI]);
+export const ERC20TokenABI = [{
+  "name": "allowance",
+  "type": "function",
+  "constant": true,
+  "inputs": [{"name":"owner","type":"address"}, {"name":"spender","type":"address"}],
+  "outputs": [{"name":"tokens","type":"uint256"}]
+},{
+  "name": "approve",
+  "type": "function",
+  "constant": true,
+  "inputs": [{"name":"spender","type":"address"}, {"name":"tokens","type":"uint256"}],
+  "outputs": [{"name":"spender","type":"address"}, {"name":"tokens","type":"uint256"}]
+},{
+  "name": "balanceOf",
+  "type": "function",
+  "constant": true,
+  "inputs": [{"name":"_owner","type":"address"}],
+  "outputs": [{"name":"balance","type":"uint256"}]
+}]
+
+
+abiDecoder.addABI([depositABI, borrowABI]);
 
 export const ethDecoder = abiDecoder;

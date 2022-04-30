@@ -6,8 +6,11 @@
 # Jobs
 
 - transfer tokens to Umee `npm run job:transfer`
-- supply tokens `npm run job:supply`
-- borrow tokens `npm run job:borrow`
+- transfer tokens to ETH `npm run job:transfer:eth`
+- supply COSMOS tokens `npm run job:supply`
+- borrow COSMOS tokens `npm run job:borrow`
+- supply ERC20 tokens `npm run job:supply:eth`
+- borrow ERC20 tokens`npm run job:borrow:eth`
 - start all jobs `npm run job:all`
 
 # Telegram notify

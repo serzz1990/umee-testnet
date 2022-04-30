@@ -18,7 +18,7 @@ export async function getLastMessage () {
 
 export async function sendBorrowStat (stats) {
   const messages = stats.map(templateBorrowStat);
-  await sendMessage(messages.join(` `));
+  await sendMessage(`📊 <b>Stat</b>` + messages.join(` `));
 }
 
 export async function sendMessage (text) {

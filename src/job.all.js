@@ -28,6 +28,31 @@ sendMessage('Job:all started');
   JobBorrow();
 })(30*60*1000); // 30m
 
+/**
+ * ETH JOBS
+ */
+
+// (async function JobTransferEth (delay = 0) {
+//   await sleep(delay);
+//   runJob('npm run job:transfer:eth');
+//   await sleep(3*60*60*1000); //3h
+//   JobTransferEth();
+// })(15*60*1000); // 15m
+
+// (async function JobSupplyEth (delay = 0) {
+//   await sleep(delay);
+//   runJob('npm run job:supply:eth');
+//   await sleep(30*60*1000); // 30m
+//   JobSupplyEth();
+// })(20*60*1000); // 20m
+
+// (async function JobBorrowEth (delay = 0) {
+//   await sleep(delay);
+//   runJob('npm run job:borrow:eth');
+//   await sleep(30*60*1000); // 30m
+//   JobBorrowEth();
+// })(40*60*1000); // 40m
+
 (async function JobStat (delay = 0) {
   await sleep(delay);
   runJob('npm run job:stat');

@@ -7,8 +7,11 @@
     "job": "nodemon -r esm ./src/index.js",
     "tg:chatid": "node -r esm src/telegram/chatid.js",
     "job:transfer": "node -r esm ./src/job.transfer.js",
+    "job:transfer:eth": "node -r esm ./src/job.transfer.eth.js",
+    "job:supply:eth": "node -r esm ./src/job.supply.eth.js",
     "job:supply": "node -r esm ./src/job.supply.js",
     "job:borrow": "node -r esm ./src/job.borrow.js",
+    "job:borrow:eth": "node -r esm ./src/job.borrow.eth.js",
     "job:stat": "node -r esm ./src/job.stat.js",
     "job:all": "nodemon -r esm ./src/job.all.js"
   },
