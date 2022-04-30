@@ -12,7 +12,6 @@ function getProgress (n, red = false) {
 }
 
 export function templateBorrowStat (stat, i) {
-  console.log(stat)
   if (stat) {
     let message = '';
     const totalBorrowed = stat.totalBorrowed.toFixed(0);
