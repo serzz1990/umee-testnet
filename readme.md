@@ -13,6 +13,9 @@
 - borrow ERC20 tokens`npm run job:borrow:eth`
 - start all jobs `npm run job:all`
 
+#ETH
+- add ethPrivateKey or use the same mnemonic in `wallets.json`
+
 # Telegram notify
 
 - create tg bot [here](https://t.me/BotFather)
