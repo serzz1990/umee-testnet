@@ -20,9 +20,8 @@ const sleep = promisify(setTimeout);
 
       for(const network of [networks.cosmos]) {
         try {
-          const stat = await getEthStat({ mnemonic, ethPrivateKey, network })
-          const approveTokensCount = await getApproveTokens({ mnemonic, privateKey: ethPrivateKey, from: network.eth.token })
-
+          const stat = await getEthStat({ mnemonic, ethPrivateKey, network });
+          const approveTokensCount = await getApproveTokens({ mnemonic, privateKey: ethPrivateKey, tokenAddress: network.eth.token })
           if (!approveTokensCount) {
             await approveTokens({ mnemonic, privateKey: ethPrivateKey, from: network });
           } else if (stat.balance > 0) {

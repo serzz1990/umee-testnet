@@ -32,13 +32,13 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry })
 
   console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
-
+  const _amount = Math.floor((amount - 1) * 1000000).toString();
   const result = await client.signAndBroadcast(address, [{
     typeUrl: '/gravity.v1.MsgSendToEth',
     value: {
       sender: address,
       ethDest: accountEth.address,
-      amount: coin(amount * 1000000, from.denomInUmee),
+      amount: coin(_amount, from.denomInUmee),
       bridgeFee: coin(100000, from.denomInUmee)
     }
   }], {
@@ -78,20 +78,21 @@ export async function supplyFromEth ({ mnemonic, privateKey, from, amount = 1000
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
+  const _amount = Math.floor(amount * 1000000).toString();
   const txConfig = {
     from: account.address,
     to: contractCosmosAddress,
     nonce: txCount,
     value: '0',
     type: 2,
-    data: web3.eth.abi.encodeFunctionCall(depositABI, [from.eth.token, (amount.toFixed(0) * 1000000).toString(), account.address, '0'])
+    data: web3.eth.abi.encodeFunctionCall(depositABI, [from.eth.token, _amount, account.address, '0'])
   }
   txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
   const txSign = await account.signTransaction(txConfig);
   console.log(chalk.blue(`Supply ${amount} ${from.addressName}/umee from ETH`));
 
   try {
-    await web3.eth.sendSignedTransaction(txSign.rawTransaction)
+    await web3.eth.sendSignedTransaction(txSign.rawTransaction);
     console.log(chalk.green(`SUCCESS supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
   } catch (e) {
     console.log(chalk.red(`FAIL supply ${amount} ${from.addressName}/umee from ETH`), txSign.transactionHash);
@@ -103,13 +104,14 @@ export async function borrowFromEth ({ mnemonic, privateKey, from, amount = 1000
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
+  const _amount = Math.floor(amount * 1000000).toString();
   const txConfig = {
     from: account.address,
     to: contractCosmosAddress,
     nonce: txCount,
     value: '0',
     type: 2,
-    data: web3.eth.abi.encodeFunctionCall(borrowABI, [from.eth.token, (amount.toFixed(0) * 1000000).toString(), '2', '0', account.address])
+    data: web3.eth.abi.encodeFunctionCall(borrowABI, [from.eth.token, _amount, '2', '0', account.address])
   }
   txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
   const txSign = await account.signTransaction(txConfig);
@@ -136,10 +138,9 @@ export async function approveTokens ({ mnemonic, privateKey, from }) {
     type: 2,
     data: contract.methods.approve(contractCosmosAddress, '115792089237316195423570985008687907853269984665640564039457584007913129639935').encodeABI()
   }
-  txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
-
-  const txSign = await account.signTransaction(txConfig);
   console.log(chalk.blue(`approve tokens ${from.addressName}/umee in ETH`));
+  txConfig.gas = await web3.eth.estimateGas(txConfig) * 2;
+  const txSign = await account.signTransaction(txConfig);
 
   try {
     await web3.eth.sendSignedTransaction(txSign.rawTransaction)
