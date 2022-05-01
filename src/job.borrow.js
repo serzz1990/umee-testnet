@@ -6,6 +6,7 @@ import { getPrices } from "./bank";
 
 import networks from './nerworks.json';
 import chalk from "chalk";
+import {sendError} from "./telegram";
 
 const sleep = promisify(setTimeout);
 const randomInArray = (array) => array[Math.floor(Math.random() * array.length)];
@@ -39,6 +40,7 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
 
       console.log(chalk.green(`Can't borrow anymore`));
     } catch (e) {
+      sendError(e);
       console.log(e);
     }
     await sleep(1000);

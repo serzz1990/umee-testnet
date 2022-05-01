@@ -7,6 +7,7 @@ import { promisify } from "util";
 import chalk from "chalk";
 import networks from './nerworks.json';
 import {approveTokens, getApproveTokens, getEthStat, supplyFromEth} from "./eth";
+import {sendError} from "./telegram";
 
 const sleep = promisify(setTimeout);
 
@@ -35,11 +36,13 @@ const sleep = promisify(setTimeout);
             console.log(chalk.green(`Token ${network.addressName} already supplied`));
           }
         } catch (e) {
+          sendError(e);
           console.log(chalk.red(`FAIL in ${network.addressName}`, e));
         }
         await sleep(1000);
       }
     } catch (e) {
+      sendError(e);
       console.log(e);
     }
   }

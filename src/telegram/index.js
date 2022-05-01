@@ -21,6 +21,11 @@ export async function sendBorrowStat (stats) {
   await sendMessage(`📊 <b>Stat</b>` + messages.join(` `));
 }
 
+export async function sendError (error) {
+  await sendMessage(`❗️<b>ERROR</b>:
+${error}`);
+}
+
 export async function sendMessage (text) {
   if (!process.env.TELEGRAM_TOKEN || !process.env.TELEGRAM_CHAT_ID) return;
   try {

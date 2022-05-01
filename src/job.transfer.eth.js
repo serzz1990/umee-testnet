@@ -7,6 +7,7 @@ import { promisify } from "util";
 import networks from './nerworks.json';
 import chalk from "chalk";
 import {sendToEth} from "./eth";
+import {sendError} from "./telegram";
 
 const sleep = promisify(setTimeout);
 
@@ -34,11 +35,13 @@ const sleep = promisify(setTimeout);
             console.log(chalk.green(`Token ${network.addressName} already transferred`));
           }
         } catch (e) {
+          sendError(e);
           console.log(chalk.red(`FAIL in ${network.addressName}`));
         }
         await sleep(1000);
       }
     } catch (e) {
+      sendError(e);
       console.log(e);
     }
   }
