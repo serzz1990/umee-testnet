@@ -168,7 +168,12 @@ export async function getEthStat ({ mnemonic, privateKey, network }) {
 export async function getApproveTokens ({ mnemonic, privateKey, tokenAddress }) {
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
-  const contract = new web3.eth.Contract(ERC20TokenABI, tokenAddress);
-  const result = await contract.methods.allowance(account.address, contractCosmosAddress).call();
-  return result || 0
+  try {
+    const contract = new web3.eth.Contract(ERC20TokenABI, tokenAddress);
+    const result = await contract.methods.allowance(account.address, contractCosmosAddress).call();
+    return result || 0
+  } catch (e) {
+    console.log('Fail in getApproveTokens', tokenAddress, e);
+    return 0;
+  }
 }
