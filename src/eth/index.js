@@ -31,7 +31,9 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   const [{ address }] = await wallet.getAccounts()
   const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry })
 
-  const bridgeFee = 3953776;
+  // const bridgeFee = 4405327;
+  const bridgeFee = 264872;
+  // const bridgeFee = 3953776;
   const _amount = Math.floor((amount - 1) * 1000000 - bridgeFee);
   if (_amount > 0) {
     console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
@@ -44,7 +46,7 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
         bridgeFee: coin(bridgeFee, from.denomInUmee)
       }
     }], {
-      amount: coins(2000, networks.umee.denom),
+      amount: coins(8000, networks.umee.denom),
       gas: "200000"
     }, "memo")
 
