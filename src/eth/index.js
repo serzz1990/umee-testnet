@@ -31,30 +31,34 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   const [{ address }] = await wallet.getAccounts()
   const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry })
 
-  console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
-  const _amount = Math.floor((amount - 1) * 1000000).toString();
-  const result = await client.signAndBroadcast(address, [{
-    typeUrl: '/gravity.v1.MsgSendToEth',
-    value: {
-      sender: address,
-      ethDest: accountEth.address,
-      amount: coin(_amount, from.denomInUmee),
-      bridgeFee: coin(100000, from.denomInUmee)
+  const bridgeFee = 3953776;
+  const _amount = Math.floor((amount - 1) * 1000000 - bridgeFee);
+  if (_amount > 0) {
+    console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
+    const result = await client.signAndBroadcast(address, [{
+      typeUrl: '/gravity.v1.MsgSendToEth',
+      value: {
+        sender: address,
+        ethDest: accountEth.address,
+        amount: coin(_amount, from.denomInUmee),
+        bridgeFee: coin(bridgeFee, from.denomInUmee)
+      }
+    }], {
+      amount: coins(2000, networks.umee.denom),
+      gas: "200000"
+    }, "memo")
+
+    if (result.code === 0) {
+      console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
+    } else {
+      console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
+      console.log(result.rawLog)
     }
-  }], {
-    amount: coins(2000, networks.umee.denom),
-    gas: "200000"
-  }, "")
-
-  if (result.code === 0) {
-    console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
+    client.disconnect();
+    return result;
   } else {
-    console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
-    console.log(result.rawLog)
+    console.log(chalk.red(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee insufficient funds`));
   }
-
-  client.disconnect()
-  return result
 }
 
 export async function getEthBalance ({ mnemonic, privateKey, tokenAddress }) {
