@@ -42,7 +42,7 @@ const sleep = promisify(setTimeout);
         await sleep(1000);
       }
     } catch (e) {
-      sendError(e);
+      sendError([`job.transfer.eth`, `wallet: ${index + 1}`, e]);
       console.log(e);
     }
   }

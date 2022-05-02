@@ -82,7 +82,7 @@ export async function supplyFromEth ({ mnemonic, privateKey, from, amount = 1000
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
-  const _amount = Math.floor(amount * 1000000).toString();
+  const _amount = Math.floor(amount * 1000000);
   const txConfig = {
     from: account.address,
     to: contractCosmosAddress,
@@ -108,7 +108,7 @@ export async function borrowFromEth ({ mnemonic, privateKey, from, amount = 1000
   const web3 = new Web3(RPCUrl);
   const account = await getEthAccount({ mnemonic, privateKey });
   const txCount = await web3.eth.getTransactionCount(account.address);
-  const _amount = Math.floor(amount * 1000000).toString();
+  const _amount = Math.floor(amount * 1000000);
   const txConfig = {
     from: account.address,
     to: contractCosmosAddress,

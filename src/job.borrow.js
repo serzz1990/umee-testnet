@@ -37,7 +37,6 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
           continue;
         }
       }
-
       console.log(chalk.green(`Can't borrow anymore`));
     } catch (e) {
       sendError([`job.borrow`, `wallet: ${index + 1}`, e]);

@@ -43,7 +43,7 @@ const sleep = promisify(setTimeout);
       }
     } catch (e) {
       console.log(e);
-      sendError(e);
+      sendError([`job.transfer`, `wallet: ${index + 1}`, e]);
     }
   }
   console.log(`JOB TRANSFER: ended (${new Date()})`);

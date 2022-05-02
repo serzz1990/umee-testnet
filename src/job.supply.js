@@ -40,7 +40,7 @@ const sleep = promisify(setTimeout);
         await sleep(1000);
       }
     } catch (e) {
-      sendError(e);
+      sendError([`job.supply`, `wallet: ${index + 1}`, e]);
       console.log(e);
     }
   }

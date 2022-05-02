@@ -22,6 +22,7 @@ const sleep = promisify(setTimeout);
         try {
           const stat = await getEthStat({ mnemonic, ethPrivateKey, network });
           const approveTokensCount = await getApproveTokens({ mnemonic, privateKey: ethPrivateKey, tokenAddress: network.eth.token })
+          console.log('stat', approveTokensCount)
           if (!approveTokensCount) {
             await approveTokens({ mnemonic, privateKey: ethPrivateKey, from: network });
           } else if (stat.balance > 0) {
@@ -41,7 +42,7 @@ const sleep = promisify(setTimeout);
         await sleep(1000);
       }
     } catch (e) {
-      sendError(e);
+      sendError([`job.supply.eth`, `wallet: ${index + 1}`, e]);
       console.log(e);
     }
   }
