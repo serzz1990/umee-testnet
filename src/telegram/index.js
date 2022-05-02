@@ -1,7 +1,7 @@
 import '../env'
 import Telegram from 'node-telegram-bot-api'
 import axios from "axios";
-import { templateBorrowStat } from "./templates";
+import { templateBorrowStat, nl } from "./templates";
 
 export const bot = new Telegram(process.env.TELEGRAM_TOKEN, { polling: false });
 
@@ -22,8 +22,8 @@ export async function sendBorrowStat (stats) {
 }
 
 export async function sendError (error) {
-  await sendMessage(`❗️<b>ERROR</b>:
-${error}`);
+  const errors = Array.isArray(error) ? error : [error];
+  await sendMessage(`❗️<b>ERROR</b>:${nl}${error.join(nl)}`);
 }
 
 export async function sendMessage (text) {

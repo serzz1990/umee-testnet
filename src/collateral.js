@@ -11,14 +11,15 @@ import chalk from "chalk";
 export async function sendCollateral ({ mnemonic, from, amount = 10 }) {
   const network = from;
   const amountFee = 2000;
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'umee' })
-  const [{address}] = await wallet.getAccounts()
-  const collateralized = await checkCollateral(mnemonic, network)
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'umee' });
+  const [{address}] = await wallet.getAccounts();
+  const collateralized = await checkCollateral(mnemonic, network);
+  const _amount = Math.floor(amount * 1000000);
   const messages = [{
     typeUrl: '/umeenetwork.umee.leverage.v1beta1.MsgLendAsset',
     value: {
       lender: address,
-      amount: coin(amount * 1000000, network.denomInUmee)
+      amount: coin(_amount, network.denomInUmee)
     }
   }]
 

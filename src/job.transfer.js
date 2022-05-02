@@ -35,7 +35,8 @@ const sleep = promisify(setTimeout);
             console.log(chalk.green(`Token ${network.addressName} already transferred`));
           }
         } catch (e) {
-          sendError(e);
+          sendError([`job.transfer`, `wallet: ${index + 1}`, e]);
+          console.log(e);
           console.log(chalk.red(`FAIL in ${network.addressName}`));
         }
         await sleep(1000);

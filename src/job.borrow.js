@@ -40,7 +40,7 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
 
       console.log(chalk.green(`Can't borrow anymore`));
     } catch (e) {
-      sendError(e);
+      sendError([`job.borrow`, `wallet: ${index + 1}`, e]);
       console.log(e);
     }
     await sleep(1000);
