@@ -3,9 +3,9 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBech32, fromBech32 } from "@cosmjs/encoding";
 import { coins, coin } from "@cosmjs/launchpad";
-import registry from "./registry";
-import chalk from "chalk";
+import { addLogMessage } from "./logs";
 import { umee } from "./nerworks.json";
+import registry from "./registry";
 
 export async function transfer({ mnemonic, from, to = umee, amount = 10 }) {
   const feeAmount = 10000;
@@ -31,13 +31,13 @@ export async function transfer({ mnemonic, from, to = umee, amount = 10 }) {
     }
   }
   const fee = {amount: coins(feeAmount, fromNetwork.denom), gas: "1000000"};
-  console.log(chalk.blue(`Send tx from ${fromNetwork.addressName} to ${toNetwork.addressName} amount: ${amount}`));
+  await addLogMessage(mnemonic, `TRANSFER | to umee from ${address} | Send ${amount} ${fromNetwork.denom}`);
   const result = await client.signAndBroadcast(address, [m], fee, "");
 
   if (result.code === 0) {
-    console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}`), result.transactionHash);
+    await addLogMessage(mnemonic, `TRANSFER | to umee from ${address} | SUCCESS Send ${amount} ${fromNetwork.denom} | TX HASH: ${result.transactionHash}`);
   } else {
-    console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}`), result.transactionHash);
+    await addLogMessage(mnemonic, `TRANSFER | to umee from ${address} | FAIL Send ${amount} ${fromNetwork.denom} | TX HASH: ${result.transactionHash}`);
     console.log(result.rawLog);
   }
 

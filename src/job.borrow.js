@@ -3,11 +3,11 @@ import { getBorrowStat } from "./stat";
 import { getBorrow } from "./borrow";
 import { promisify } from "util";
 import { getPrices } from "./bank";
+import { sendError } from "./telegram";
+import { addLogMessage } from "./logs";
 
 import networks from './nerworks.json';
 import chalk from "chalk";
-import {sendError} from "./telegram";
-import {addLogMessage} from "./logs";
 
 const sleep = promisify(setTimeout);
 const randomInArray = (array) => array[Math.floor(Math.random() * array.length)];
@@ -20,7 +20,6 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
 
     try {
       const { mnemonic } = wallet;
-      await addLogMessage(mnemonic, 'Hello world');
       const limitPercent = 80;
       const network = randomInArray([networks.cosmos, networks.juno, networks.osmo]);
       const borrowStat = await getBorrowStat(mnemonic);
@@ -39,9 +38,8 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
           continue;
         }
       }
-      console.log(chalk.green(`Can't borrow anymore`));
     } catch (e) {
-      sendError([`job.borrow`, `wallet: ${index + 1}`, e]);
+      await addLogMessage(mnemonic, `BORRROW | FAIL | ${e}`);
       console.log(e);
     }
     await sleep(1000);

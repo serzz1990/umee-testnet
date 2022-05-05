@@ -1,15 +1,16 @@
-import {DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
-import {SigningStargateClient} from "@cosmjs/stargate";
-import registry from "../registry";
-import {coin, coins} from "@cosmjs/launchpad";
-import networks from '../nerworks.json';
-import chalk from "chalk";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { SigningStargateClient } from "@cosmjs/stargate";
+import { ethDecoder, depositABI, borrowABI, ERC20TokenABI } from "./decoder";
+import { coin, coins } from "@cosmjs/launchpad";
 import { umee } from "../nerworks.json";
 import { ethers } from "ethers";
-const RPCUrl = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+import registry from "../registry";
+import networks from '../nerworks.json';
+import chalk from "chalk";
 import Web3 from 'web3';
-import {ethDecoder, depositABI, borrowABI, ERC20TokenABI} from "./decoder";
+import {addLogMessage} from "../logs";
 
+const RPCUrl = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
 const contractCosmosAddress = '0x75d5e88adf8f3597c7c3e4a930544fb48089c779';
 
 export async function getEthAccount ({ mnemonic, privateKey }) {
@@ -27,16 +28,18 @@ export async function getEthAccount ({ mnemonic, privateKey }) {
 export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   const fromNetwork = from;
   const accountEth = await getEthAccount({ mnemonic, privateKey });
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: networks.umee.addressName })
-  const [{ address }] = await wallet.getAccounts()
-  const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry })
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: networks.umee.addressName });
+  const [{ address }] = await wallet.getAccounts();
+  const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry });
 
   // const bridgeFee = 4405327;
-  const bridgeFee = 260778;
+  // const bridgeFee = 260778;
+  // const bridgeFee = 242674;
   // const bridgeFee = 3953776;
+  const bridgeFee = getRandomArbitrary(232674, 380478);
   const _amount = Math.floor((amount - 1) * 1000000 - bridgeFee);
   if (_amount > 0) {
-    console.log(chalk.blue(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee`));
+    await addLogMessage(mnemonic, `TRANSFER ETH | send ${amount} from ${fromNetwork.addressName}/umee`);
     const result = await client.signAndBroadcast(address, [{
       typeUrl: '/gravity.v1.MsgSendToEth',
       value: {
@@ -47,19 +50,19 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
       }
     }], {
       amount: coins(8000, networks.umee.denom),
-      gas: "200000"
-    }, "memo")
+      gas: '200000'
+    }, 'memo');
 
     if (result.code === 0) {
-      console.log(chalk.green(`SUCCESS send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
+      await addLogMessage(mnemonic, `TRANSFER ETH | SUCCESS | send ${amount} from ${fromNetwork.addressName}/umee | TX HASH: ${result.transactionHash}`);
     } else {
-      console.log(chalk.red(`FAIL send ${amount} from ${fromNetwork.addressName}/umee to ETH`), result.transactionHash);
-      console.log(result.rawLog)
+      await addLogMessage(mnemonic, `TRANSFER ETH | FAIL | send ${amount} from ${fromNetwork.addressName}/umee | TX HASH: ${result.transactionHash}`);
+      console.log(result.rawLog);
     }
     client.disconnect();
     return result;
   } else {
-    console.log(chalk.red(`Send to ETH ${amount} from ${fromNetwork.addressName}/umee insufficient funds`));
+    await addLogMessage(mnemonic, `TRANSFER ETH | FAIL | send ${amount} from ${fromNetwork.addressName}/umee | insufficient funds`);
   }
 }
 
@@ -178,4 +181,8 @@ export async function getApproveTokens ({ mnemonic, privateKey, tokenAddress }) 
     console.log('Fail in getApproveTokens', tokenAddress, e);
     return 0;
   }
+}
+
+function getRandomArbitrary(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
 }

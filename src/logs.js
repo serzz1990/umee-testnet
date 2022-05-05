@@ -15,9 +15,12 @@ export async function getPathnameByMnemonic (mnemonic) {
 }
 
 export async function addLogMessage (mnemonic, message) {
-  const filepath = await getPathnameByMnemonic(mnemonic);
-  const content = await fs.promises.readFile(filepath);
-  const now = new Date();
-  await fs.promises.writeFile(filepath, `${now}: ${message}\n${content}`);
+  try {
+    const filepath = await getPathnameByMnemonic(mnemonic);
+    const content = await fs.promises.readFile(filepath);
+    const now = new Date();
+    console.log(message);
+    await fs.promises.writeFile(filepath, `${now}: ${message}\n${content}`);
+  } catch (e) {}
 }
 
