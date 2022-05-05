@@ -7,6 +7,7 @@ import { getPrices } from "./bank";
 import networks from './nerworks.json';
 import chalk from "chalk";
 import {sendError} from "./telegram";
+import {addLogMessage} from "./logs";
 
 const sleep = promisify(setTimeout);
 const randomInArray = (array) => array[Math.floor(Math.random() * array.length)];
@@ -19,6 +20,7 @@ const randomInArray = (array) => array[Math.floor(Math.random() * array.length)]
 
     try {
       const { mnemonic } = wallet;
+      await addLogMessage(mnemonic, 'Hello world');
       const limitPercent = 80;
       const network = randomInArray([networks.cosmos, networks.juno, networks.osmo]);
       const borrowStat = await getBorrowStat(mnemonic);

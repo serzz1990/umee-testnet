@@ -53,16 +53,7 @@ sendMessage('Job:all started');
   JobBorrowEth();
 })(40*60*1000); // 40m
 
-
-/**
- * STAT JOB
- */
-
-(async function JobStat (delay = 0) {
-  await sleep(delay);
-  runJob('npm run job:stat');
-  JobStat(delay);
-})(6*60*60*1000); // 6h
+runJob('npm run job:tgbot');
 
 function runJob (command) {
   console.log(command);

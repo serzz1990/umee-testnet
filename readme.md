@@ -11,6 +11,7 @@
 - borrow COSMOS tokens `npm run job:borrow`
 - supply ERC20 tokens `npm run job:supply:eth`
 - borrow ERC20 tokens`npm run job:borrow:eth`
+- send stat to tg `npm run job:stat`
 - start all jobs `npm run job:all`
 
 #ETH
@@ -23,3 +24,7 @@
 - write any message into bot
 - get chat id `npm run tg:chatid`
 - add chat id to `.env`
+
+# Telegram commands
+- /stat
+- /logs

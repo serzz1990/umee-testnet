@@ -13,7 +13,8 @@
     "job:borrow": "node -r esm ./src/job.borrow.js",
     "job:borrow:eth": "node -r esm ./src/job.borrow.eth.js",
     "job:stat": "node -r esm ./src/job.stat.js",
-    "job:all": "nodemon -r esm ./src/job.all.js"
+    "job:all": "nodemon -r esm ./src/job.all.js",
+    "job:tgbot": "nodemon -r esm ./src/job.tgbot.js"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.28.4",

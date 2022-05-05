@@ -5,6 +5,10 @@ import { templateBorrowStat, nl } from "./templates";
 
 export const bot = new Telegram(process.env.TELEGRAM_TOKEN, { polling: false });
 
+export function createPollingBot () {
+  return new Telegram(process.env.TELEGRAM_TOKEN, { polling: true });
+}
+
 export async function getLastMessage () {
   try {
     const url = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/getupdates?limit=1&offset=-1`;

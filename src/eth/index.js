@@ -32,7 +32,7 @@ export async function sendToEth ({ mnemonic, privateKey, from, amount = 10 }) {
   const client = await SigningStargateClient.connectWithSigner(networks.umee.rpcNodeUrl, wallet, { registry })
 
   // const bridgeFee = 4405327;
-  const bridgeFee = 264872;
+  const bridgeFee = 260778;
   // const bridgeFee = 3953776;
   const _amount = Math.floor((amount - 1) * 1000000 - bridgeFee);
   if (_amount > 0) {
