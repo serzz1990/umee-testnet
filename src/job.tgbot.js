@@ -32,7 +32,7 @@ bot.onText(/\/stat/, function onEditableText(msg) {
       }, []))
     }
   };
-  bot.sendMessage(msg.from.id, 'Choice wallet for stat', opts);
+  bot.sendMessage(msg.chat.id, 'Choice wallet for stat', opts);
 });
 
 bot.onText(/\/logs/, function onEditableText(msg) {
@@ -53,7 +53,7 @@ bot.onText(/\/logs/, function onEditableText(msg) {
       }, [])
     }
   };
-  bot.sendMessage(msg.from.id, 'Choice wallet for logs', opts);
+  bot.sendMessage(msg.chat.id, 'Choice wallet for logs', opts);
 });
 
 bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
