@@ -18,18 +18,20 @@ runJob('npm run job:tgbot');
   JobsTransfers();
 })();
 
-(async function JobsSupplyAndBorrow () {
+(async function JobsSupplyAndBorrow (delay = 0) {
+  await sleep(delay);
+
   await runJob('npm run job:supply');
-  // await runJob('npm run job:supply:eth');
+  await runJob('npm run job:supply:eth');
   await runJob('npm run job:borrow');
-  // await runJob('npm run job:borrow:eth');
+  await runJob('npm run job:borrow:eth');
 
   const min = 30*60*1000; // 30min
   const max = 50*60*1000; // 50min
   await sleep(getRandomArbitrary(min, max));
 
-  JobsSupplyAndBorrow();
-})();
+  JobsSupplyAndBorrow(0);
+})(10*60*1000); // 10min
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
